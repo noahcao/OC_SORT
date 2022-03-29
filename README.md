@@ -1,4 +1,5 @@
 # OC-SORT
+
 This is the github repo for **<u>Observation-Centric SORT: Rethinking SORT for Robust Multi-Object Tracking</u>** [[arxiv]](https://arxiv.org/abs/2203.14360).
 
 **Observation-Centric SORT (OC-SORT)** is a pure motion-model-based multi-object tracker. It aims to improve tracking robustness in **crowded scenes and when objects are in non-linear motion**. It is designed by recognizing and fixing limitations in Kalman filter and [SORT](https://arxiv.org/abs/1602.00763). It is flexible to integrate with different detectors and matching modules, such as appearance similarity. It remains, **Simple, Online and Real-time**.
@@ -10,6 +11,13 @@ This is the github repo for **<u>Observation-Centric SORT: Rethinking SORT for R
 
 
 ## Benchmark Performance
+
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/observation-centric-sort-rethinking-sort-for/multi-object-tracking-on-dancetrack)](https://paperswithcode.com/sota/multi-object-tracking-on-dancetrack?p=observation-centric-sort-rethinking-sort-for) 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/observation-centric-sort-rethinking-sort-for/multiple-object-tracking-on-kitti-tracking)](https://paperswithcode.com/sota/multiple-object-tracking-on-kitti-tracking?p=observation-centric-sort-rethinking-sort-for)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/observation-centric-sort-rethinking-sort-for/multi-object-tracking-on-mot17)](https://paperswithcode.com/sota/multi-object-tracking-on-mot17?p=observation-centric-sort-rethinking-sort-for) 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/observation-centric-sort-rethinking-sort-for/multi-object-tracking-on-mot20-1)](https://paperswithcode.com/sota/multi-object-tracking-on-mot20-1?p=observation-centric-sort-rethinking-sort-for) 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/observation-centric-sort-rethinking-sort-for/multiple-object-tracking-on-crohd)](https://paperswithcode.com/sota/multiple-object-tracking-on-crohd?p=observation-centric-sort-rethinking-sort-for)
+
 
 | Dataset    |  HOTA | AssA | IDF1 | MOTA | FP | FN | IDs | Frag | 
 |------------|-------|------|------|-------|-------|------|------|------|
@@ -31,7 +39,7 @@ This is the github repo for **<u>Observation-Centric SORT: Rethinking SORT for R
 
 
 ## Get Started
-The code and document is coming soon here and in [mmtracking](https://github.com/open-mmlab/mmtracking).
+The code and document is coming soon here and in [mmtracking](https://github.com/open-mmlab/mmtracking). Stayed tuned!
 
 
 ## Model Zoo
@@ -60,10 +68,11 @@ python3 tools/demo_track.py --demo_type video -f exps/example/mot/yolox_dancetra
 
 ## Acknowledgement and Citation
 The codebase is built highly upon [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX) and [ByteTrack](https://github.com/ifzhang/ByteTrack). We thank their wondeful works. If you want this codebase useful, please cite our paper:
-```shell
+```
 @misc{cao2022observationcentric,
       title={Observation-Centric SORT: Rethinking SORT for Robust Multi-Object Tracking}, 
       author={Jinkun Cao and Xinshuo Weng and Rawal Khirodkar and Jiangmiao Pang and Kris Kitani},
+      url={https://arxiv.org/abs/2203.14360},
       year={2022},
       eprint={2203.14360},
       archivePrefix={arXiv},
