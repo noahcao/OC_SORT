@@ -71,7 +71,7 @@ python3 tools/demo_track.py --demo_type video -f exps/example/mot/yolox_dancetra
 
 
 ## Acknowledgement and Citation
-The codebase is built highly upon [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX) and [ByteTrack](https://github.com/ifzhang/ByteTrack). We thank their wondeful works. If you want this codebase useful, please cite our paper:
+The codebase is built highly upon [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX) and [ByteTrack](https://github.com/ifzhang/ByteTrack). We thank their wondeful works. If you find this work useful, please consider to cite our paper:
 ```
 @misc{cao2022observationcentric,
       title={Observation-Centric SORT: Rethinking SORT for Robust Multi-Object Tracking}, 
