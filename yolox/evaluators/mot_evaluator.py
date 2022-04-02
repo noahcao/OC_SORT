@@ -362,7 +362,7 @@ class MOTEvaluator:
         synchronize()
         return eval_results
 
-    def evaluate_sort(
+    def evaluate_ocsort(
         self,
         model,
         distributed=False,

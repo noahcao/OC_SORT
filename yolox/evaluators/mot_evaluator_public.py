@@ -114,33 +114,6 @@ class MOTEvaluatorPublic:
                 video_id = info_imgs[3].item()
                 img_file_name = info_imgs[4]
                 video_name = img_file_name[0].split('/')[0]
-
-                if not video_name == "MOT17-12-DPM":
-                    continue
-
-                if video_name == 'MOT17-05-FRCNN' or video_name == 'MOT17-06-FRCNN':
-                    self.args.track_buffer = 14
-                elif video_name == 'MOT17-13-FRCNN' or video_name == 'MOT17-14-FRCNN':
-                    self.args.track_buffer = 25
-                else:
-                    self.args.track_buffer = 30
-
-                if video_name == 'MOT17-01-FRCNN':
-                    self.args.track_thresh = 0.65
-                elif video_name == 'MOT17-06-FRCNN':
-                    self.args.track_thresh = 0.65
-                elif video_name == 'MOT17-12-FRCNN':
-                    self.args.track_thresh = 0.7
-                elif video_name == 'MOT17-14-FRCNN':
-                    self.args.track_thresh = 0.67
-                else:
-                    self.args.track_thresh = ori_thresh
-                
-                if video_name == 'MOT20-06' or video_name == 'MOT20-08':
-                    self.args.track_thresh = 0.3
-                else:
-                    self.args.track_thresh = ori_thresh
-
                 if video_name not in video_names:
                     video_names[video_id] = video_name
                 if frame_id == 1:
@@ -211,7 +184,7 @@ class MOTEvaluatorPublic:
         synchronize()
         return eval_results
 
-    def evaluate_sort(
+    def evaluate_ocsort(
         self,
         model,
         distributed=False,

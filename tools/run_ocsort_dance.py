@@ -118,7 +118,7 @@ def main(exp, args, num_gpu):
         decoder = None
 
     # start evaluate
-    *_, summary = evaluator.evaluate_sort(
+    *_, summary = evaluator.evaluate_ocsort(
             model, is_distributed, args.fp16, trt_file, decoder, exp.test_size, results_folder
     )
 

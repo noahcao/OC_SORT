@@ -170,7 +170,7 @@ class MOTEvaluator:
         synchronize()
         return eval_results
 
-    def evaluate_sort(
+    def evaluate_ocsort(
         self,
         model,
         distributed=False,
@@ -351,6 +351,7 @@ class MOTEvaluator:
                 data_list.append(pred_data)
         return data_list
 
+
     def evaluate_prediction(self, data_dict, statistics):
         if not is_main_process():
             return 0, 0, None
@@ -385,14 +386,6 @@ class MOTEvaluator:
             _, tmp = tempfile.mkstemp()
             json.dump(data_dict, open(tmp, "w"))
             cocoDt = cocoGt.loadRes(tmp)
-            '''
-            try:
-                from yolox.layers import COCOeval_opt as COCOeval
-            except ImportError:
-                from pycocotools import cocoeval as COCOeval
-                logger.warning("Use standard COCOeval.")
-            '''
-            #from pycocotools.cocoeval import COCOeval
             from yolox.layers import COCOeval_opt as COCOeval
             cocoEval = COCOeval(cocoGt, cocoDt, annType[1])
             cocoEval.evaluate()
