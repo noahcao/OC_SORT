@@ -83,13 +83,11 @@ The codebase is built highly upon [YOLOX](https://github.com/Megvii-BaseDetectio
 
 If you find this work useful, please consider to cite our paper:
 ```
-@misc{cao2022observationcentric,
-      title={Observation-Centric SORT: Rethinking SORT for Robust Multi-Object Tracking}, 
-      author={Jinkun Cao and Xinshuo Weng and Rawal Khirodkar and Jiangmiao Pang and Kris Kitani},
-      url={https://arxiv.org/abs/2203.14360},
-      year={2022},
-      eprint={2203.14360},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@article{cao2022observation,
+  title={Observation-Centric SORT: Rethinking SORT for Robust Multi-Object Tracking},
+  author={Cao, Jinkun and Weng, Xinshuo and Khirodkar, Rawal and Pang, Jiangmiao and Kitani, Kris},
+  journal={arXiv preprint arXiv:2203.14360},
+  year={2022}
+}
 }
 ```
