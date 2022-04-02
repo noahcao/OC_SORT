@@ -2,7 +2,7 @@ import numpy as np
 import os
 import glob
 import motmetrics as mm
-
+import sys 
 from yolox.evaluators.evaluation import Evaluator
 
 
@@ -14,7 +14,6 @@ def mkdir_if_missing(d):
 def eval_mota(data_root, txt_path):
     accs = []
     seqs = sorted([s for s in os.listdir(data_root) if s.endswith('FRCNN')])
-    #seqs = sorted([s for s in os.listdir(data_root)])
     for seq in seqs:
         video_out_path = os.path.join(txt_path, seq + '.txt')
         evaluator = Evaluator(data_root, seq, 'mot', anno="gt_val_half.txt")
@@ -33,7 +32,6 @@ def eval_mota(data_root, txt_path):
 def get_mota(data_root, txt_path):
     accs = []
     seqs = sorted([s for s in os.listdir(data_root) if s.endswith('FRCNN')])
-    #seqs = sorted([s for s in os.listdir(data_root)])
     for seq in seqs:
         video_out_path = os.path.join(txt_path, seq + '.txt')
         evaluator = Evaluator(data_root, seq, 'mot')
@@ -166,35 +164,8 @@ def dti_kitti(txt_path, save_path, n_min=30, n_dti=20):
 
 
 if __name__ == '__main__':
-    """
-    data_root = 'datasets/mot/test'
-    txt_path = 'YOLOX_outputs/yolox_x_mix_det/track_results'
-    save_path = 'YOLOX_outputs/yolox_x_mix_det/track_results_dti'
-    """
-    import sys 
     txt_path, save_path = sys.argv[1], sys.argv[2]
     data_root = 'datasets/mot/train'
-    # txt_path = 'YOLOX_outputs/yolox_x_mot17_train/track_results'
-    
-    # save_path = 'YOLOX_outputs/yolox_x_mot17_train/track_results_interpolated'
-
-    """
-    base_path = "evaldata/trackers/mot_challenge/MOT17-test"
-    tracker = "track_results_sort_0.7_0.25"
-    txt_path = os.path.join(base_path, "{}/data".format(tracker))
-    save_path = os.path.join(base_path, "{}_interpolated_nti_20/data".format(tracker))
-    """
-    """
-    txt_path = "YOLOX_outputs/yolox_x_mix_mot20_ch/track_results"
-    save_path = "YOLOX_outputs/yolox_x_mix_mot20_ch/track_results_interpolated"
-    """
-    # txt_path = "evaldata/trackers/mot_challenge/MOT20-test/track_results_sort_0.4_0.3/data"
-    # save_path ="evaldata/trackers/mot_challenge/MOT20-test/track_results_sort_0.4_0.3_interpolated_35/data"
-    # txt_path = "evaldata/trackers/mot_challenge//MOT17-val/track_results_sort_0.6_0.3_inertia0.1_vweight0.2_spin0.2_corrected_uniformal/data"
-    # save_path = "evaldata/trackers/mot_challenge//MOT17-val/track_results_sort_0.6_0.3_inertia0.1_vweight0.2_spin0.2_corrected_uniformal_interpolated/data"
-    # txt_path = "evaldata/trackers/mot_challenge/MOT17-test/track_results_sort_0.6_0.3_adjustedthr_inertia0.1/data"
-    # save_path =  "evaldata/trackers/mot_challenge/MOT17-test/track_results_sort_0.6_0.3_adjustedthr_inertia0.1_interpolated_n20/data"
-
     mkdir_if_missing(save_path)
     dti(txt_path, save_path, n_min=30, n_dti=20)
     print('Before DTI: ')
