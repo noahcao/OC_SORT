@@ -57,7 +57,7 @@ def make_parser():
     
     # for kitti/bdd100k inference with public detections
     parser.add_argument('--raw_results_path', type=str, default="exps/permatrack_kitti_test/",
-        help="path to the raw tracking results from PermaTrack")
+        help="path to the raw tracking results from other tracks")
     parser.add_argument('--out_path', type=str, help="path to save output results")
     parser.add_argument("--dataset", type=str, default="mot", help="kitti or bdd")
     parser.add_argument("--hp", action="store_true", help="use head padding to add the missing objects during \

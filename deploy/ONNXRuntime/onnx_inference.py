@@ -10,7 +10,7 @@ import onnxruntime
 from yolox.data.data_augment import preproc as preprocess
 from yolox.utils import mkdir, multiclass_nms, demo_postprocess, vis
 from yolox.utils.visualize import plot_tracking
-from trackers.ocsort_tracker.sort import OCSort
+from trackers.ocsort_tracker.ocsort import OCSort
 from trackers.tracking_utils.timer import Timer
 
 

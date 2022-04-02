@@ -295,7 +295,7 @@ class OCSort(object):
             return np.concatenate(ret)
         return np.empty((0, 5))
 
-    def update_kitti(self, dets, cates, scores):
+    def update_public(self, dets, cates, scores):
         self.frame_count += 1
 
         det_scores = np.ones((dets.shape[0], 1))

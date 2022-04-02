@@ -175,7 +175,7 @@ def main(args):
                 assert(0)
             assert(dets.shape[0] == cates.shape[0])
             t0 = time.time()
-            online_targets = tracker.update_kitti(dets, cates, scores)
+            online_targets = tracker.update_public(dets, cates, scores)
             t1 = time.time()
             total_frame += 1
             total_time += t1 - t0

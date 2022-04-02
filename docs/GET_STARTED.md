@@ -118,7 +118,7 @@ Download the COCO-pretrained YOLOX weight [here](https://github.com/Megvii-BaseD
     For fair comparison of association performance only, we use the detection results from a public [PermaTrack](https://github.com/TRI-ML/permatrack) model weights as indicated [here](https://github.com/TRI-ML/permatrack/issues/16). The output of PermanceTrack is provided in *exps/permatrack_kitti_test/* already. Simply run the command to use OC-SORT over KITTI-test set:
 
     ```shell
-    python tools/run_ocsort_public.py  --hp --out_path kitti_test --dataset kitti
+    python tools/run_ocsort_public.py  --hp --out_path kitti_test --dataset kitti --raw_results_path exps/permatrack_kitti_test
     ```
 
     Then, submit the output .txt files to [the KITTI evaluation server](http://www.cvlibs.net/datasets/kitti/).
