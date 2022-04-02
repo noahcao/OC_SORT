@@ -9,6 +9,9 @@ This is the github repo for **<u>Observation-Centric SORT: Rethinking SORT for R
 <img src="assets/teaser.png" width="600"/>
 </center>
 
+## News
+* [04/02/2022]: A preview version is released after a primary cleanup and refactor. 
+* [03/27/2022]: The [arxiv preprint](https://arxiv.org/abs/2203.14360) of OC-SORT is released.
 
 ## Benchmark Performance
 
@@ -43,7 +46,12 @@ This is the github repo for **<u>Observation-Centric SORT: Rethinking SORT for R
 
 
 ## Get Started
-The code and document is coming soon here and in [mmtracking](https://github.com/open-mmlab/mmtracking). Stayed tuned!
+* See [INSTALL.md](./docs/INSTALL.md) for instructions of installing required components.
+
+* See [GET_STARTED.md](./docs/GET_STARTED.md) for how to get started with OC-SORT.
+
+* See [DEPLOY.md](./docs/DEPLOY.md) for deployment support over ONNX, TensorRT and ncnn.
+
 
 
 ## Model Zoo
@@ -71,7 +79,9 @@ python3 tools/demo_track.py --demo_type video -f exps/example/mot/yolox_dancetra
 
 
 ## Acknowledgement and Citation
-The codebase is built highly upon [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX) and [ByteTrack](https://github.com/ifzhang/ByteTrack). We thank their wondeful works. If you find this work useful, please consider to cite our paper:
+The codebase is built highly upon [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX), [filterpy](https://github.com/rlabbe/filterpy), and [ByteTrack](https://github.com/ifzhang/ByteTrack). We thank their wondeful works. OC-SORT, filterpy and ByteTrack are available under MIT License. And [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX) uses Apache License 2.0 License.
+
+If you find this work useful, please consider to cite our paper:
 ```
 @misc{cao2022observationcentric,
       title={Observation-Centric SORT: Rethinking SORT for Robust Multi-Object Tracking}, 
