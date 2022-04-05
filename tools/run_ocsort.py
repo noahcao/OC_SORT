@@ -26,7 +26,8 @@ def compare_dataframes(gts, ts):
         if k in gts:       
             print(k)     
             logger.info('Comparing {}...'.format(k))
-            vflag = open("results/eval_{}.txt".format(k), 'w')
+            os.makedirs("results_log", exist_ok=True)
+            vflag = open("results_log/eval_{}.txt".format(k), 'w')
             accs.append(mmp.utils.compare_to_groundtruth(gts[k], tsacc, 'iou', distth=0.5, vflag=vflag))
             names.append(k)
             vflag.close()

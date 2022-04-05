@@ -6,9 +6,7 @@ __pycache__/
 evaldata/
 # C extensions
 *.so
-traj_plots
 # Distribution / packaging
-# datasets/
 .Python
 build/
 evaldata
@@ -29,7 +27,6 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-# datasets/
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.

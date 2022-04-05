@@ -1,5 +1,5 @@
 ## Installation
-OC-SORT is built upon codebase of [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX) and [ByteTrack](https://github.com/ifzhang/ByteTrack). 
+OC-SORT is built upon codebase of [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX) and [ByteTrack](https://github.com/ifzhang/ByteTrack). I tested the code with Python 3.8. 
 
 ### 1. Installing on the host machine
 Step1. Install OC-SORT
@@ -18,7 +18,7 @@ pip3 install cython; pip3 install 'git+https://github.com/cocodataset/cocoapi.gi
 
 Step3. Others
 ```shell
-pip3 install cython_bbox
+pip3 install cython_bbox pandas xmltodict
 ```
 ### 2. Docker build
 ```shell
