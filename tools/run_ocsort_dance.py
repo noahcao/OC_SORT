@@ -35,6 +35,7 @@ def compare_dataframes(gts, ts):
 
 @logger.catch
 def main(exp, args, num_gpu):
+    
     if args.seed is not None:
         random.seed(args.seed)
         torch.manual_seed(args.seed)
@@ -54,9 +55,7 @@ def main(exp, args, num_gpu):
 
     result_dir = "{}_test".format(args.expn) if args.test else "{}_val".format(args.expn)
     results_folder = os.path.join(file_name, result_dir)
-
     os.makedirs(results_folder, exist_ok=True)
-
     setup_logger(file_name, distributed_rank=rank, filename="val_log.txt", mode="a")
     logger.info("Args: {}".format(args))
 
@@ -117,25 +116,21 @@ def main(exp, args, num_gpu):
         trt_file = None
         decoder = None
 
-    # start evaluate
+    # start tracking
     *_, summary = evaluator.evaluate_ocsort(
             model, is_distributed, args.fp16, trt_file, decoder, exp.test_size, results_folder
     )
+    
+    if args.test:
+        # we skip evaluation for inference on test set
+        return 
 
+    # if we evaluate on validation set, 
     logger.info("\n" + summary)
 
-    # evaluate MOTA
+    # evaluate on the validation set
     mm.lap.default_solver = 'lap'
-
-    if exp.val_ann == 'val_half.json':
-        gt_type = '_val_half'
-    else:
-        gt_type = ''
-    print('gt_type', gt_type)
-    if args.mot20:
-        gtfiles = glob.glob(os.path.join('datasets/MOT20/train', '*/gt/gt{}.txt'.format(gt_type)))
-    else:
-        gtfiles = glob.glob(os.path.join('datasets/mot/train', '*/gt/gt{}.txt'.format(gt_type)))
+    gtfiles = glob.glob(os.path.join('datasets/dancetrack/val', '*/gt/gt.txt'))
     print('gt_files', gtfiles)
     tsfiles = [f for f in glob.glob(os.path.join(results_folder, '*.txt')) if not os.path.basename(f).startswith('eval')]
 
