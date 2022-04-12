@@ -115,8 +115,6 @@ def txt2img(visual_path="visual_val_gt"):
                     'MOT17-10-FRCNN',        
                     'MOT17-11-FRCNN',
                     'MOT17-13-FRCNN']
-
-
     test_json_path = 'datasets/mot/annotations/test.json'
     test_img_path = 'datasets/mot/test/'
     test_show_video_names = ['MOT17-01-FRCNN', 

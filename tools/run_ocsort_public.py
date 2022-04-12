@@ -120,7 +120,7 @@ def main(args):
         cats = ['Pedestrian', 'Car', 'Cyclist', "Van", "Truck"]
     elif dataset == "bdd":
         """
-            We are not supporting BDD yet. This is a placeholder.
+            We are not supporting BDD yet. This is a placeholder for now.
         """
         test_seqs = BDD_test_seqs
         cats = ["rider", "car", "truck", "bicycle", "motorcycle", "pedestrian", "bus"]

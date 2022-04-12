@@ -78,6 +78,14 @@ python3 tools/demo_track.py --demo_type video -f exps/example/mot/yolox_dancetra
 </center>
 
 
+## Roadmap
+We are still actively updating OC-SORT. We always welcome contributions to make it better for the community. We have some high-priorty to-dos as below:
+- [x] Add more asssocitaion cost choices: GIoU, CIoU, etc.
+- [ ] Support OC-SORT in [mmtracking](https://github.com/open-mmlab/mmtracking).
+- [ ] Add more deployment options and improve the inference speed.
+- [ ] Make OC-SORT adaptive to customized detector.
+
+
 ## Acknowledgement and Citation
 The codebase is built highly upon [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX), [filterpy](https://github.com/rlabbe/filterpy), and [ByteTrack](https://github.com/ifzhang/ByteTrack). We thank their wondeful works. OC-SORT, filterpy and ByteTrack are available under MIT License. And [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX) uses Apache License 2.0 License.
 

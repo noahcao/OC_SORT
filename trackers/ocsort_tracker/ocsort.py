@@ -6,7 +6,6 @@ from __future__ import print_function
 import numpy as np
 from .association import *
 
-np.random.seed(0)
 
 def k_previous_obs(observations, cur_age, k):
     if len(observations) == 0:
@@ -92,6 +91,11 @@ class KalmanBoxTracker(object):
         self.hits = 0
         self.hit_streak = 0
         self.age = 0
+        """
+        NOTE: [-1,-1,-1,-1,-1] is a compromising placeholder for non-observation status, the same for the return of 
+        function k_previous_obs. It is ugly and I do not like it. But to support generate observation array in a 
+        fast and unified way, which you would see below k_observations = np.array([k_previous_obs(...]]), let's bear it for now.
+        """
         self.last_observation = np.array([-1, -1, -1, -1, -1])  # placeholder
         self.observations = dict()
         self.history_observations = []
@@ -238,7 +242,7 @@ class OCSort(object):
         matched, unmatched_dets, unmatched_trks = associate(
             dets, trks, self.iou_threshold, velocities, k_observations, self.inertia)
         for m in matched:
-          self.trackers[m[1]].update(dets[m[0], :])
+            self.trackers[m[1]].update(dets[m[0], :])
 
         """
             Second round of associaton by OCR
