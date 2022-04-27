@@ -217,7 +217,7 @@ class MOTEvaluator:
             model = model_trt
             
         tracker = OCSort(det_thresh = self.args.track_thresh, iou_threshold=self.args.iou_thresh,
-            asso_func=self.args.asso, delta_t=self.args.deltat, inertia=self.args.inertia)
+            asso_func=self.args.asso, delta_t=self.args.deltat, inertia=self.args.inertia, use_byte=self.args.use_byte)
         
         detections = dict()
 
@@ -240,7 +240,7 @@ class MOTEvaluator:
 
                 if frame_id == 1:
                     tracker = OCSort(det_thresh = self.args.track_thresh, iou_threshold=self.args.iou_thresh,
-                            asso_func=self.args.asso, delta_t=self.args.deltat, inertia=self.args.inertia)
+                            asso_func=self.args.asso, delta_t=self.args.deltat, inertia=self.args.inertia, use_byte=self.args.use_byte)
                     if len(results) != 0:
                         result_filename = os.path.join(result_folder, '{}.txt'.format(video_names[video_id - 1]))
                         write_results_no_score(result_filename, results)
@@ -350,6 +350,7 @@ class MOTEvaluator:
                 }  # COCO json format
                 data_list.append(pred_data)
         return data_list
+
 
 
     def evaluate_prediction(self, data_dict, statistics):
