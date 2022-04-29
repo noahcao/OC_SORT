@@ -265,8 +265,6 @@ class MOTEvaluator:
                 img_file_name = info_imgs[4]
                 video_name = img_file_name[0].split('/')[0]
 
-                if not video_name == "MOT17-12-DPM":
-                    continue
 
                 if video_name == 'MOT17-05-FRCNN' or video_name == 'MOT17-06-FRCNN':
                     self.args.track_buffer = 14
