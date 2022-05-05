@@ -31,7 +31,7 @@
 | MOT20 (public)   | 54.3 | 59.5 | 67.0 | 59.9 | 4,434   | 202,502 | 554   | 2,345  |
 | KITTI-cars       | 76.5 | 76.4 | -    | 90.3 | 2,685   | 407     | 250   | 280    |
 | KITTI-pedestrian | 54.7 | 59.1 | -    | 65.1 | 6,422   | 1,443   | 204   | 609    |
-| DanceTrack       | 55.1 | 38.0 | 54.2 | 89.4 | 114,107 | 139,083 | 1,992 | 3,838  |
+| DanceTrack-test  | 55.1 | 38.0 | 54.2 | 89.4 | 114,107 | 139,083 | 1,992 | 3,838  |
 | CroHD HeadTrack  | 44.1 | -    | 62.9 | 67.9 | 102,050 | 164,090 | 4,243 | 10,122 |
 
 * Results are from reusing detections of previous methods and shared hyper-parameters. Tune the implementation adaptive to datasets may get higher performance.
@@ -47,20 +47,9 @@
 
 * See [GET_STARTED.md](./docs/GET_STARTED.md) for how to get started with OC-SORT.
 
+* See [MODEL_ZOO.md](./docs/MODEL_ZOO.md) for available YOLOX weights.
+
 * See [DEPLOY.md](./docs/DEPLOY.md) for deployment support over ONNX, TensorRT and ncnn.
-
-
-
-## Model Zoo
-The pretrained model trained on DanceTrack-train set is the original version provided in [DanceTrack](https://github.com/DanceTrack/DanceTrack/tree/main/ByteTrack), we rename and redirect it on [Google Drive](https://drive.google.com/drive/folders/1LnhZVJlpufUnWuObZASIN1KwfhuvT_a8?usp=sharing) for convenience. The weights should output results as below:
-
-| Dataset         | HOTA | IDF1 | AssA | MOTA | DetA |
-| --------------- | ---- | ---- | ---- | ---- | ---- |
-| DanceTrack-val  | 52.1 | 51.6 | 35.3 | 87.3 | 77.2 |
-| DanceTrack-test | 55.1 | 54.2 | 38.0 | 89.4 | 80.3 |
-
-
-* For model weights for other datasets, please refer to the model zoo of [ByteTrack](https://github.com/ifzhang/ByteTrack) for options.
 
 
 ## Demo
