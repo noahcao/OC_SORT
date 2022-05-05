@@ -38,5 +38,5 @@ docker run --gpus all -it --rm \
 -e XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR \
 -e DISPLAY=$DISPLAY \
 --privileged \
-bytetrack:latest
+ocsort:latest
 ```

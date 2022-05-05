@@ -54,6 +54,7 @@ def make_parser():
     parser.add_argument("--mot20", dest="mot20", default=False, action="store_true", help="test mot20.")
     parser.add_argument("--public", action="store_true", help="use public detection")
     parser.add_argument('--asso', default="iou", help="similarity function: iou/giou/diou/ciou/ctdis")
+    parser.add_argument("--use_byte", dest="use_byte", default=False, action="store_true", help="use byte in tracking.")
     
     # for kitti/bdd100k inference with public detections
     parser.add_argument('--raw_results_path', type=str, default="exps/permatrack_kitti_test/",

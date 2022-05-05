@@ -96,7 +96,7 @@ def image_demo(predictor, vis_folder, current_time, args):
     else:
         files = [args.path]
     files.sort()
-    tracker = OCSort(det_thresh=args.track_thresh, iou_threshold=args.iou_thresh)
+    tracker = OCSort(det_thresh=args.track_thresh, iou_threshold=args.iou_thresh, use_byte=args.use_byte)
     timer = Timer()
     results = []
 
@@ -161,7 +161,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
     vid_writer = cv2.VideoWriter(
         save_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (int(width), int(height))
     )
-    tracker = OCSort(det_thresh=args.track_thresh, iou_threshold=args.iou_thresh)
+    tracker = OCSort(det_thresh=args.track_thresh, iou_threshold=args.iou_thresh, use_byte=args.use_byte)
     timer = Timer()
     frame_id = 0
     results = []

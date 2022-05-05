@@ -174,7 +174,7 @@ ASSO_FUNCS = {  "iou": iou_batch,
 
 class OCSort(object):
     def __init__(self, det_thresh, max_age=30, min_hits=3, 
-        iou_threshold=0.3, delta_t=3, asso_func="iou", inertia=0.2):
+        iou_threshold=0.3, delta_t=3, asso_func="iou", inertia=0.2, use_byte=False):
         """
         Sets key parameters for SORT
         """
@@ -187,6 +187,7 @@ class OCSort(object):
         self.delta_t = delta_t
         self.asso_func = ASSO_FUNCS[asso_func]
         self.inertia = inertia
+        self.use_byte = use_byte
         KalmanBoxTracker.count = 0
 
     def update(self, output_results, img_info, img_size):
@@ -213,7 +214,10 @@ class OCSort(object):
         scale = min(img_size[0] / float(img_h), img_size[1] / float(img_w))
         bboxes /= scale
         dets = np.concatenate((bboxes, np.expand_dims(scores, axis=-1)), axis=1)
-
+        inds_low = scores > 0.1
+        inds_high = scores < self.det_thresh
+        inds_second = np.logical_and(inds_low, inds_high)  # self.det_thresh > score > 0.1, for second matching
+        dets_second = dets[inds_second]  # detections for second matching
         remain_inds = scores > self.det_thresh
         dets = dets[remain_inds]
 
@@ -247,6 +251,27 @@ class OCSort(object):
         """
             Second round of associaton by OCR
         """
+        # BYTE association
+        if self.use_byte and len(dets_second) > 0 and unmatched_trks.shape[0] > 0:
+            u_trks = trks[unmatched_trks]
+            iou_left = self.asso_func(dets_second, u_trks)          # iou between low score detections and unmatched tracks
+            iou_left = np.array(iou_left)
+            if iou_left.max() > self.iou_threshold:
+                """
+                    NOTE: by using a lower threshold, e.g., self.iou_threshold - 0.1, you may
+                    get a higher performance especially on MOT17/MOT20 datasets. But we keep it
+                    uniform here for simplicity
+                """
+                matched_indices = linear_assignment(-iou_left)
+                to_remove_trk_indices = []
+                for m in matched_indices:
+                    det_ind, trk_ind = m[0], unmatched_trks[m[1]]
+                    if iou_left[m[0], m[1]] < self.iou_threshold:
+                        continue
+                    self.trackers[trk_ind].update(dets_second[det_ind, :])
+                    to_remove_trk_indices.append(trk_ind)
+                unmatched_trks = np.setdiff1d(unmatched_trks, np.array(to_remove_trk_indices))
+
         if unmatched_dets.shape[0] > 0 and unmatched_trks.shape[0] > 0:
             left_dets = dets[unmatched_dets]
             left_trks = last_boxes[unmatched_trks]

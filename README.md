@@ -10,6 +10,7 @@
 </center>
 
 ## News
+* [04/27/2022]: Support intergration with BYTE and multiple cost metrics, such as GIoU, CIoU, etc.
 * [04/02/2022]: A preview version is released after a primary cleanup and refactor. 
 * [03/27/2022]: The [arxiv preprint](https://arxiv.org/abs/2203.14360) of OC-SORT is released.
 
