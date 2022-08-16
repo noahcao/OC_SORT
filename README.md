@@ -10,6 +10,7 @@
 </center>
 
 ## News
+* [08/16/2022]: Support OC-SORT in [mmtracking](https://github.com/open-mmlab/mmtracking). If you want to do tracking with more advanced and customizable experience, you may want to give it a try. The mmtracking version is still in-preview. Performance on more datasets to be verified.
 * [04/27/2022]: Support intergration with BYTE and multiple cost metrics, such as GIoU, CIoU, etc.
 * [04/02/2022]: A preview version is released after a primary cleanup and refactor. 
 * [03/27/2022]: The [arxiv preprint](https://arxiv.org/abs/2203.14360) of OC-SORT is released.
@@ -67,9 +68,9 @@ python3 tools/demo_track.py --demo_type video -f exps/example/mot/yolox_dancetra
 ## Roadmap
 We are still actively updating OC-SORT. We always welcome contributions to make it better for the community. We have some high-priorty to-dos as below:
 - [x] Add more asssocitaion cost choices: GIoU, CIoU, etc.
-- [ ] Support OC-SORT in [mmtracking](https://github.com/open-mmlab/mmtracking).
+- [x] Support OC-SORT in [mmtracking](https://github.com/open-mmlab/mmtracking).
 - [ ] Add more deployment options and improve the inference speed.
-- [ ] Make OC-SORT adaptive to customized detector.
+- [x] Make OC-SORT adaptive to customized detector (in the [mmtracking](https://github.com/open-mmlab/mmtracking) version).
 
 
 ## Acknowledgement and Citation
