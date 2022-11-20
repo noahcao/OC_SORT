@@ -39,8 +39,9 @@ def giou_batch(bboxes1, bboxes2):
     w = np.maximum(0., xx2 - xx1)
     h = np.maximum(0., yy2 - yy1)
     wh = w * h
-    iou = wh / ((bboxes1[..., 2] - bboxes1[..., 0]) * (bboxes1[..., 3] - bboxes1[..., 1])                                      
+    union = ((bboxes1[..., 2] - bboxes1[..., 0]) * (bboxes1[..., 3] - bboxes1[..., 1])                                      
         + (bboxes2[..., 2] - bboxes2[..., 0]) * (bboxes2[..., 3] - bboxes2[..., 1]) - wh)  
+    iou = wh / union
 
     xxc1 = np.minimum(bboxes1[..., 0], bboxes2[..., 0])
     yyc1 = np.minimum(bboxes1[..., 1], bboxes2[..., 1])
@@ -50,7 +51,7 @@ def giou_batch(bboxes1, bboxes2):
     hc = yyc2 - yyc1 
     assert((wc > 0).all() and (hc > 0).all())
     area_enclose = wc * hc 
-    giou = iou - (area_enclose - wh) / area_enclose
+    giou = iou - (area_enclose - union) / area_enclose
     giou = (giou + 1.)/2.0 # resize from (-1,1) to (0,1)
     return giou
 
@@ -74,9 +75,9 @@ def diou_batch(bboxes1, bboxes2):
     w = np.maximum(0., xx2 - xx1)
     h = np.maximum(0., yy2 - yy1)
     wh = w * h
-    iou = wh / ((bboxes1[..., 2] - bboxes1[..., 0]) * (bboxes1[..., 3] - bboxes1[..., 1])                                      
+    union = ((bboxes1[..., 2] - bboxes1[..., 0]) * (bboxes1[..., 3] - bboxes1[..., 1])                                      
         + (bboxes2[..., 2] - bboxes2[..., 0]) * (bboxes2[..., 3] - bboxes2[..., 1]) - wh) 
-
+    iou = wh / union
     centerx1 = (bboxes1[..., 0] + bboxes1[..., 2]) / 2.0
     centery1 = (bboxes1[..., 1] + bboxes1[..., 3]) / 2.0
     centerx2 = (bboxes2[..., 0] + bboxes2[..., 2]) / 2.0
@@ -113,8 +114,9 @@ def ciou_batch(bboxes1, bboxes2):
     w = np.maximum(0., xx2 - xx1)
     h = np.maximum(0., yy2 - yy1)
     wh = w * h
-    iou = wh / ((bboxes1[..., 2] - bboxes1[..., 0]) * (bboxes1[..., 3] - bboxes1[..., 1])                                      
+    union = ((bboxes1[..., 2] - bboxes1[..., 0]) * (bboxes1[..., 3] - bboxes1[..., 1])                                      
         + (bboxes2[..., 2] - bboxes2[..., 0]) * (bboxes2[..., 3] - bboxes2[..., 1]) - wh) 
+    iou = wh / union
 
     centerx1 = (bboxes1[..., 0] + bboxes1[..., 2]) / 2.0
     centery1 = (bboxes1[..., 1] + bboxes1[..., 3]) / 2.0
