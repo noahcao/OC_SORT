@@ -10,6 +10,8 @@
 </center>
 
 ## News
+* [02/28/2023]: OC-SORT is accepted to CVPR 2023. We will update the code and paper soon. We made intensive revision of the paper writing.
+* [02/26/2023]: Deep-OC-SORT, a combination of OC-SORT and deep visual appearance, is released on [Github](https://github.com/GerardMaggiolino/Deep-OC-SORT/) and [Arxiv](https://arxiv.org/abs/2302.11813). Significant performance improvement on MOT17, MOT20 and DanceTrack.
 * [08/16/2022]: Support OC-SORT in [mmtracking](https://github.com/open-mmlab/mmtracking). If you want to do tracking with more advanced and customizable experience, you may want to give it a try. The mmtracking version is still in-preview. Performance on more datasets to be verified.
 * [04/27/2022]: Support intergration with BYTE and multiple cost metrics, such as GIoU, CIoU, etc.
 * [04/02/2022]: A preview version is released after a primary cleanup and refactor. 
