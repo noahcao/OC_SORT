@@ -143,3 +143,7 @@ visualizations
 results/
 error_log.txt
 dance_detections/
+
+
+# IDE
+.vs
