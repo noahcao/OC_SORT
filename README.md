@@ -16,6 +16,8 @@
 </center>
 
 ## News
+* [07/09/2023]: A C++ support is provided. See the [doc](deploy/OCSort/cpp/Readme.md) for instructions. Thanks for the contribution!
+* [07/01/2023]: [Deep OC-SORT](https://github.com/GerardMaggiolino/Deep-OC-SORT/) is accepted to ICIP2023. It adds an adaptive appeareance similarity-based association upon OC-SORT.
 * [03/15/2023]: We update the preprint version on [Arxiv](https://arxiv.org/pdf/2203.14360.pdf). We rename OOS to be "Observation-centric Re-Update" (ORU).
 * [02/28/2023]: OC-SORT is accepted to CVPR 2023. We will update the code and paper soon. We made intensive revision of the paper writing.
 * [02/26/2023]: Deep-OC-SORT, a combination of OC-SORT and deep visual appearance, is released on [Github](https://github.com/GerardMaggiolino/Deep-OC-SORT/) and [Arxiv](https://arxiv.org/abs/2302.11813). Significant performance improvement on MOT17, MOT20 and DanceTrack.
