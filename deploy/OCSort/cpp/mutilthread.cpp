@@ -40,42 +40,43 @@ std::ostream& operator<<(std::ostream& os, const std::vector<AnyCls>& v) {
 
 void processFrame(const cv::Mat& frame, std::vector<Detection>& output, ocsort::OCSort& tracker) {
     std::vector<std::vector<float>> data;
+    cv::Rect box;
 
-    for (int i = 1; i < output.size(); ++i) {
+    for (int i = 0; i < output.size(); ++i) {
         Detection detection = output[i];
-        cv::Rect box = detection.box;
+        box = detection.box;
         std::vector<float> row;
 
-        for (;;) {
-            row.push_back(output[i].box.x);
-            row.push_back(output[i].box.y);
-            row.push_back(output[i].box.x + output[i].box.width);
-            row.push_back(output[i].box.y + output[i].box.height);
-            row.push_back(output[i].confidence);
-            row.push_back(output[i].class_id);
-            break;
-        }
+        row.push_back(box.x);
+        row.push_back(box.y);
+        row.push_back(box.x + box.width);
+        row.push_back(box.y + box.height);
+        row.push_back(detection.confidence);
+        row.push_back(detection.class_id);
 
         data.push_back(row);
 
-        std::vector<Eigen::RowVectorXf> res = tracker.update(Vector2Matrix(data));
+        if (!data.empty()) {
+            std::vector<Eigen::RowVectorXf> res = tracker.update(Vector2Matrix(data));
 
-        cv::rectangle(frame, box, cv::Scalar(0, 255, 0), 2);
+            cv::rectangle(frame, box, cv::Scalar(0, 255, 0), 2);
 
-        std::string classString = detection.className + '(' + std::to_string(detection.confidence).substr(0, 4) + ')';
-        cv::putText(frame, classString, cv::Point(box.x + 5, box.y + box.height - 10), cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(0, 255, 0), 1, 0);
+            std::string classString = detection.className + '(' + std::to_string(detection.confidence).substr(0, 4) + ')';
+            cv::putText(frame, classString, cv::Point(box.x + 5, box.y + box.height - 10), cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(0, 255, 0), 1, 0);
 
-        for (auto j : res) {
-            int ID = int(j[4]);
-            int Class = int(j[5]);
-            float conf = j[6];
-            cv::putText(frame, cv::format("ID:%d", ID), cv::Point(j[0], j[1] - 5), 0, 0.5, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
-            cv::rectangle(frame, cv::Rect(j[0], j[1], j[2] - j[0] + 1, j[3] - j[1] + 1), cv::Scalar(0, 0, 255), 1);
+            for (auto j : res) {
+                int ID = int(j[4]);
+                int Class = int(j[5]);
+                float conf = j[6];
+                cv::putText(frame, cv::format("ID:%d", ID), cv::Point(j[0], j[1] - 5), 0, 0.5, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+                cv::rectangle(frame, cv::Rect(j[0], j[1], j[2] - j[0] + 1, j[3] - j[1] + 1), cv::Scalar(0, 0, 255), 1);
+            }
+
+            data.clear();
         }
-
-        data.clear();
     }
 }
+
 
 void videoODThread(const std::string& file, const std::string& modelfile) {
     bool runGPU = true;
