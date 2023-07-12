@@ -40,40 +40,23 @@ std::ostream& operator<<(std::ostream& os, const std::vector<AnyCls>& v) {
 
 void processFrame(const cv::Mat& frame, std::vector<Detection>& output, ocsort::OCSort& tracker) {
     std::vector<std::vector<float>> data;
+    std::vector<Eigen::RowVectorXf> res;
 
-    for (int i = 1; i < output.size(); ++i) {
-        Detection detection = output[i];
-        cv::Rect box = detection.box;
-        std::vector<float> row;
-
-        for (;;) {
-            row.push_back(output[i].box.x);
-            row.push_back(output[i].box.y);
-            row.push_back(output[i].box.x + output[i].box.width);
-            row.push_back(output[i].box.y + output[i].box.height);
-            row.push_back(output[i].confidence);
-            row.push_back(output[i].class_id);
-            break;
-        }
-
+    for (const auto& value : detectionOutput) {
+        std::vector<float> row = { value.rect.x, value.rect.y, value.rect.x + value.rect.width, value.rect.y + value.rect.height, value.probability, (float) value.label };
         data.push_back(row);
+    }
 
-        std::vector<Eigen::RowVectorXf> res = tracker.update(Vector2Matrix(data));
+    res = tracker->update(Vector2Matrix(data));
 
-        cv::rectangle(frame, box, cv::Scalar(0, 255, 0), 2);
+    for (const auto& j : res) {
+        float ID = static_cast<int>(j[4]);
+        float Class = static_cast<int>(j[5]);
+        float conf = j[6];
 
-        std::string classString = detection.className + '(' + std::to_string(detection.confidence).substr(0, 4) + ')';
-        cv::putText(frame, classString, cv::Point(box.x + 5, box.y + box.height - 10), cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(0, 255, 0), 1, 0);
-
-        for (auto j : res) {
-            int ID = int(j[4]);
-            int Class = int(j[5]);
-            float conf = j[6];
-            cv::putText(frame, cv::format("ID:%d", ID), cv::Point(j[0], j[1] - 5), 0, 0.5, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
-            cv::rectangle(frame, cv::Rect(j[0], j[1], j[2] - j[0] + 1, j[3] - j[1] + 1), cv::Scalar(0, 0, 255), 1);
-        }
-
-        data.clear();
+        //// Debuging bounding box object tracker
+        cv::putText(m_currentFrame, cv::format("ID:%.0f", ID), cv::Point(j[0], j[1] - 5), 0, 2, cv::Scalar(0, 0, 255), 4, cv::LINE_AA);
+        cv::rectangle(m_currentFrame, cv::Rect(j[0], j[1], j[2] - j[0] + 1, j[3] - j[1] + 1), cv::Scalar(0, 0, 255), 4);
     }
 }
 
