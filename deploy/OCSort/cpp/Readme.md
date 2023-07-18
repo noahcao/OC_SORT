@@ -193,4 +193,5 @@ The function processFrame takes three parameters: a constant reference to a `cv:
 
 Inside the function, a `std::vector<std::vector<float>>` named `data` is created to store the converted detection data. Then, the function iterates over the output vector starting from index 1 (skipping the first element) using a for loop. For each `Detection` object, the coordinates (x, y, width, height), confidence, and class ID are extracted and stored in a `std::vector<float>` named `row`. 
 
-
+# Reference author
+Thank you to the original author for building a great codebase. The code below is a modified version of their code, see the original code at [OC SORT CPP](https://github.com/Postroggy/OC_SORT_CPP)
