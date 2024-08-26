@@ -175,8 +175,8 @@ ASSO_FUNCS = {  "iou": iou_batch,
 
 
 class OCSort(object):
-    def __init__(self, det_thresh, max_age=30, min_hits=3,
-                 iou_threshold=0.3, delta_t=3, asso_func="iou", inertia=0.2, use_byte=False):
+    def __init__(self, det_thresh, max_age=30, min_hits=3, 
+        iou_threshold=0.3, delta_t=3, asso_func="iou", inertia=0.2, use_byte=False):
         """
         Sets key parameters for SORT
         """
@@ -207,7 +207,7 @@ class OCSort(object):
         # post_process detections
         if output_results.shape[1] == 6:
             scores = output_results[:, 4]
-            classes = output_results[:, 5]
+            class_ids = output_results[:, 5]
             bboxes = output_results[:, :4]
         else:
             output_results = output_results.cpu().numpy()
@@ -216,13 +216,15 @@ class OCSort(object):
         img_h, img_w = img_info[0], img_info[1]
         scale = min(img_size[0] / float(img_h), img_size[1] / float(img_w))
         bboxes /= scale
-        dets = np.concatenate((bboxes, np.expand_dims(scores, axis=-1),np.expand_dims(classes, axis =-1)), axis=1)
+        dets = np.concatenate((bboxes, np.expand_dims(scores, axis=-1),np.expand_dims(class_ids, axis =-1)), axis=1)
         inds_low = scores > 0.1
         inds_high = scores < self.det_thresh
         inds_second = np.logical_and(inds_low, inds_high)  # self.det_thresh > score > 0.1, for second matching
         dets_second = dets[inds_second]  # detections for second matching
+        class_ids_second = class_ids[inds_second]
         remain_inds = scores > self.det_thresh
         dets = dets[remain_inds]
+        class_ids = class_ids[remain_inds]
 
         # get predicted locations from existing trackers.
         trks = np.zeros((len(self.trackers), 6))
@@ -230,7 +232,7 @@ class OCSort(object):
         ret = []
         for t, trk in enumerate(trks):
             pos = self.trackers[t].predict()[0]
-            trk[:] = [pos[0], pos[1], pos[2], pos[3], 0, 0]
+            trk[:] = [pos[0], pos[1], pos[2], pos[3], 0, self.trackers[t].class_id]
             if np.any(np.isnan(pos)):
                 to_del.append(t)
         trks = np.ma.compress_rows(np.ma.masked_invalid(trks))
@@ -318,7 +320,8 @@ class OCSort(object):
                 d = trk.last_observation[:4]
             if (trk.time_since_update < 1) and (trk.hit_streak >= self.min_hits or self.frame_count <= self.min_hits):
                 # +1 as MOT benchmark requires positive
-                ret.append(np.concatenate((d, [trk.id + 1], [trk.class_id])).reshape(1, -1))
+                #ret.append(np.concatenate((d, [trk.id + 1], [trk.class_id])).reshape(1, -1))
+                 ret.append(np.concatenate((d[:4], [trk.id+1], [trk.class_id])).reshape(1, -1))
             i -= 1
             # remove dead tracklet
             if(trk.time_since_update > self.max_age):
@@ -398,7 +401,7 @@ class OCSort(object):
                           continue
                     self.trackers[trk_ind].update(dets[det_ind, :])
                     to_remove_det_indices.append(det_ind)
-                    to_remove_trk_indices.append(trk_ind)
+                    to_remove_trk_indices.append(trk_ind) 
                 unmatched_dets = np.setdiff1d(unmatched_dets, np.array(to_remove_det_indices))
                 unmatched_trks = np.setdiff1d(unmatched_trks, np.array(to_remove_trk_indices))
 
@@ -416,14 +419,14 @@ class OCSort(object):
             if (trk.time_since_update < 1):
                 if (self.frame_count <= self.min_hits) or (trk.hit_streak >= self.min_hits):
                     # id+1 as MOT benchmark requires positive
-                    ret.append(np.concatenate((d, [trk.id+1], [trk.cate], [0])).reshape(1,-1))
+                    ret.append(np.concatenate((d, [trk.id+1], [trk.cate], [0])).reshape(1,-1)) 
                 if trk.hit_streak == self.min_hits:
                     # Head Padding (HP): recover the lost steps during initializing the track
                     for prev_i in range(self.min_hits - 1):
                         prev_observation = trk.history_observations[-(prev_i+2)]
-                        ret.append((np.concatenate((prev_observation[:4], [trk.id+1], [trk.cate],
+                        ret.append((np.concatenate((prev_observation[:4], [trk.id+1], [trk.cate], 
                             [-(prev_i+1)]))).reshape(1,-1))
-            i -= 1
+            i -= 1 
             if (trk.time_since_update > self.max_age):
                   self.trackers.pop(i)
 
