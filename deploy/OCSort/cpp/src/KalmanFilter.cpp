@@ -1,4 +1,4 @@
-﻿#include "../include/KalmanFilter.hpp"
+#include "../include/KalmanFilter.hpp"
 #include <iostream>
 namespace ocsort {
     KalmanFilterNew::KalmanFilterNew() {};
@@ -26,7 +26,7 @@ namespace ocsort {
     };
     void KalmanFilterNew::predict() {
         x = F * x;
-        P = _alpha_sq * ((F * P), F.transpose()) + Q;
+        P = _alpha_sq * ((F * P) * F.transpose()) + Q;
         x_prior = x;
         P_prior = P;
     }
@@ -46,6 +46,7 @@ namespace ocsort {
         y = *z_ - H * x;
         auto PHT = P * H.transpose();
         S = H * PHT + R;
+        SI = S.inverse();
         K = PHT * SI;
         x = x + K * y;
         auto I_KH = I - K * H;
