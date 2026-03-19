@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import numpy as np
 from .association import *
+from .kalmanfilter import KalmanFilterNew
 
 
 def k_previous_obs(observations, cur_age, k):
@@ -40,7 +41,7 @@ def convert_x_to_bbox(x, score=None):
     """
     w = np.sqrt(x[2] * x[3])
     h = x[2] / w
-    if(score == None):
+    if score is None:
       return np.array([x[0]-w/2., x[1]-h/2., x[0]+w/2., x[1]+h/2.]).reshape((1, 4))
     else:
       return np.array([x[0]-w/2., x[1]-h/2., x[0]+w/2., x[1]+h/2., score]).reshape((1, 5))
@@ -60,6 +61,12 @@ class KalmanBoxTracker(object):
     """
     count = 0
 
+    # Pre-computed constant matrices shared across all trackers
+    _F = np.array([[1, 0, 0, 0, 1, 0, 0], [0, 1, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0, 1], [
+                        0, 0, 0, 1, 0, 0, 0],  [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1]], dtype=np.float64)
+    _H = np.array([[1, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0],
+                        [0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0]], dtype=np.float64)
+
     def __init__(self, bbox, delta_t=3, orig=False):
         """
         Initialises a tracker using initial bounding box.
@@ -67,15 +74,12 @@ class KalmanBoxTracker(object):
         """
         # define constant velocity model
         if not orig:
-          from .kalmanfilter import KalmanFilterNew as KalmanFilter
-          self.kf = KalmanFilter(dim_x=7, dim_z=4)
+          self.kf = KalmanFilterNew(dim_x=7, dim_z=4)
         else:
           from filterpy.kalman import KalmanFilter
           self.kf = KalmanFilter(dim_x=7, dim_z=4)
-        self.kf.F = np.array([[1, 0, 0, 0, 1, 0, 0], [0, 1, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0, 1], [
-                            0, 0, 0, 1, 0, 0, 0],  [0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1]])
-        self.kf.H = np.array([[1, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0],
-                            [0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0]])
+        self.kf.F = KalmanBoxTracker._F
+        self.kf.H = KalmanBoxTracker._H
 
         self.kf.R[2:, 2:] *= 10.
         self.kf.P[4:, 4:] *= 1000.  # give high uncertainty to the unobservable initial velocities
@@ -234,8 +238,9 @@ class OCSort(object):
         for t in reversed(to_del):
             self.trackers.pop(t)
 
+        _zero_vel = np.array((0, 0))
         velocities = np.array(
-            [trk.velocity if trk.velocity is not None else np.array((0, 0)) for trk in self.trackers])
+            [trk.velocity if trk.velocity is not None else _zero_vel for trk in self.trackers])
         last_boxes = np.array([trk.last_observation for trk in self.trackers])
         k_observations = np.array(
             [k_previous_obs(trk.observations, trk.age, self.delta_t) for trk in self.trackers])
@@ -348,7 +353,8 @@ class OCSort(object):
         for t in reversed(to_del):
             self.trackers.pop(t)
 
-        velocities = np.array([trk.velocity if trk.velocity is not None else np.array((0,0)) for trk in self.trackers])
+        _zero_vel = np.array((0, 0))
+        velocities = np.array([trk.velocity if trk.velocity is not None else _zero_vel for trk in self.trackers])
         last_boxes = np.array([trk.last_observation for trk in self.trackers])
         k_observations = np.array([k_previous_obs(trk.observations, trk.age, self.delta_t) for trk in self.trackers])
 
@@ -373,17 +379,7 @@ class OCSort(object):
             iou_left = np.array(iou_left)
             det_cates_left = cates[unmatched_dets]
             trk_cates_left = trks[unmatched_trks][:,4]
-            num_dets = unmatched_dets.shape[0]
-            num_trks = unmatched_trks.shape[0]
-            cate_matrix = np.zeros((num_dets, num_trks))
-            for i in range(num_dets):
-                for j in range(num_trks):
-                    if det_cates_left[i] != trk_cates_left[j]:
-                            """
-                                For some datasets, such as KITTI, there are different categories,
-                                we have to avoid associate them together.
-                            """
-                            cate_matrix[i][j] = -1e6
+            cate_matrix = np.where(det_cates_left[:, np.newaxis] != trk_cates_left[np.newaxis, :], -1e6, 0.0)
             iou_left = iou_left + cate_matrix
             if iou_left.max() > self.iou_threshold - 0.1:
                 rematched_indices = linear_assignment(-iou_left)
