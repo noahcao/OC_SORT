@@ -1,4 +1,3 @@
-import os
 import numpy as np
 
 
@@ -216,51 +215,58 @@ def associate_detections_to_trackers(detections,trackers,iou_threshold = 0.3):
     else:
         matched_indices = np.empty(shape=(0,2))
 
-    unmatched_detections = []
-    for d, det in enumerate(detections):
-        if(d not in matched_indices[:,0]):
-            unmatched_detections.append(d)
-    unmatched_trackers = []
-    for t, trk in enumerate(trackers):
-        if(t not in matched_indices[:,1]):
-            unmatched_trackers.append(t)
+    unmatched_detections = np.setdiff1d(np.arange(len(detections)), matched_indices[:,0]) if matched_indices.shape[0] > 0 else np.arange(len(detections))
+    unmatched_trackers = np.setdiff1d(np.arange(len(trackers)), matched_indices[:,1]) if matched_indices.shape[0] > 0 else np.arange(len(trackers))
 
     #filter out matched with low IOU
-    matches = []
-    for m in matched_indices:
-        if(iou_matrix[m[0], m[1]]<iou_threshold):
-            unmatched_detections.append(m[0])
-            unmatched_trackers.append(m[1])
-        else:
-            matches.append(m.reshape(1,2))
-    if(len(matches)==0):
-        matches = np.empty((0,2),dtype=int)
+    if matched_indices.shape[0] > 0:
+        iou_vals = iou_matrix[matched_indices[:,0], matched_indices[:,1]]
+        low_iou_mask = iou_vals < iou_threshold
+        unmatched_detections = np.concatenate([unmatched_detections, matched_indices[low_iou_mask, 0]])
+        unmatched_trackers = np.concatenate([unmatched_trackers, matched_indices[low_iou_mask, 1]])
+        matches = matched_indices[~low_iou_mask]
     else:
-        matches = np.concatenate(matches,axis=0)
+        matches = np.empty((0,2),dtype=int)
 
-    return matches, np.array(unmatched_detections), np.array(unmatched_trackers)
+    return matches, unmatched_detections.astype(int), unmatched_trackers.astype(int)
 
 
-def associate(detections, trackers, iou_threshold, velocities, previous_obs, vdc_weight):    
+def _filter_matches(matched_indices, iou_matrix, iou_threshold, num_dets, num_trks):
+    """Shared helper to split matched_indices into matches/unmatched based on IOU threshold."""
+    if matched_indices.shape[0] > 0:
+        unmatched_dets = np.setdiff1d(np.arange(num_dets), matched_indices[:,0])
+        unmatched_trks = np.setdiff1d(np.arange(num_trks), matched_indices[:,1])
+        iou_vals = iou_matrix[matched_indices[:,0], matched_indices[:,1]]
+        low_iou_mask = iou_vals < iou_threshold
+        unmatched_dets = np.concatenate([unmatched_dets, matched_indices[low_iou_mask, 0]])
+        unmatched_trks = np.concatenate([unmatched_trks, matched_indices[low_iou_mask, 1]])
+        matches = matched_indices[~low_iou_mask]
+    else:
+        unmatched_dets = np.arange(num_dets)
+        unmatched_trks = np.arange(num_trks)
+        matches = np.empty((0,2),dtype=int)
+    return matches, unmatched_dets.astype(int), unmatched_trks.astype(int)
+
+
+def associate(detections, trackers, iou_threshold, velocities, previous_obs, vdc_weight):
     if(len(trackers)==0):
         return np.empty((0,2),dtype=int), np.arange(len(detections)), np.empty((0,5),dtype=int)
 
     Y, X = speed_direction_batch(detections, previous_obs)
     inertia_Y, inertia_X = velocities[:,0], velocities[:,1]
-    inertia_Y = np.repeat(inertia_Y[:, np.newaxis], Y.shape[1], axis=1)
-    inertia_X = np.repeat(inertia_X[:, np.newaxis], X.shape[1], axis=1)
+    inertia_Y = inertia_Y[:, np.newaxis]
+    inertia_X = inertia_X[:, np.newaxis]
     diff_angle_cos = inertia_X * X + inertia_Y * Y
     diff_angle_cos = np.clip(diff_angle_cos, a_min=-1, a_max=1)
     diff_angle = np.arccos(diff_angle_cos)
     diff_angle = (np.pi /2.0 - np.abs(diff_angle)) / np.pi
 
     valid_mask = np.ones(previous_obs.shape[0])
-    valid_mask[np.where(previous_obs[:,4]<0)] = 0
-    
+    valid_mask[previous_obs[:,4] < 0] = 0
+
     iou_matrix = iou_batch(detections, trackers)
-    scores = np.repeat(detections[:,-1][:, np.newaxis], trackers.shape[0], axis=1)
-    # iou_matrix = iou_matrix * scores # a trick sometiems works, we don't encourage this
-    valid_mask = np.repeat(valid_mask[:, np.newaxis], X.shape[1], axis=1)
+    scores = detections[:,-1][:, np.newaxis]
+    valid_mask = valid_mask[:, np.newaxis]
 
     angle_diff_cost = (valid_mask * diff_angle) * vdc_weight
     angle_diff_cost = angle_diff_cost.T
@@ -275,32 +281,10 @@ def associate(detections, trackers, iou_threshold, velocities, previous_obs, vdc
     else:
         matched_indices = np.empty(shape=(0,2))
 
-    unmatched_detections = []
-    for d, det in enumerate(detections):
-        if(d not in matched_indices[:,0]):
-            unmatched_detections.append(d)
-    unmatched_trackers = []
-    for t, trk in enumerate(trackers):
-        if(t not in matched_indices[:,1]):
-            unmatched_trackers.append(t)
-
-    # filter out matched with low IOU
-    matches = []
-    for m in matched_indices:
-        if(iou_matrix[m[0], m[1]]<iou_threshold):
-            unmatched_detections.append(m[0])
-            unmatched_trackers.append(m[1])
-        else:
-            matches.append(m.reshape(1,2))
-    if(len(matches)==0):
-        matches = np.empty((0,2),dtype=int)
-    else:
-        matches = np.concatenate(matches,axis=0)
-
-    return matches, np.array(unmatched_detections), np.array(unmatched_trackers)
+    return _filter_matches(matched_indices, iou_matrix, iou_threshold, len(detections), len(trackers))
 
 
-def associate_kitti(detections, trackers, det_cates, iou_threshold, 
+def associate_kitti(detections, trackers, det_cates, iou_threshold,
         velocities, previous_obs, vdc_weight):
     if(len(trackers)==0):
         return np.empty((0,2),dtype=int), np.arange(len(detections)), np.empty((0,5),dtype=int)
@@ -310,18 +294,18 @@ def associate_kitti(detections, trackers, det_cates, iou_threshold,
     """
     Y, X = speed_direction_batch(detections, previous_obs)
     inertia_Y, inertia_X = velocities[:,0], velocities[:,1]
-    inertia_Y = np.repeat(inertia_Y[:, np.newaxis], Y.shape[1], axis=1)
-    inertia_X = np.repeat(inertia_X[:, np.newaxis], X.shape[1], axis=1)
+    inertia_Y = inertia_Y[:, np.newaxis]
+    inertia_X = inertia_X[:, np.newaxis]
     diff_angle_cos = inertia_X * X + inertia_Y * Y
     diff_angle_cos = np.clip(diff_angle_cos, a_min=-1, a_max=1)
     diff_angle = np.arccos(diff_angle_cos)
     diff_angle = (np.pi /2.0 - np.abs(diff_angle)) / np.pi
 
     valid_mask = np.ones(previous_obs.shape[0])
-    valid_mask[np.where(previous_obs[:,4]<0)]=0  
-    valid_mask = np.repeat(valid_mask[:, np.newaxis], X.shape[1], axis=1)
+    valid_mask[previous_obs[:,4] < 0] = 0
+    valid_mask = valid_mask[:, np.newaxis]
 
-    scores = np.repeat(detections[:,-1][:, np.newaxis], trackers.shape[0], axis=1)
+    scores = detections[:,-1][:, np.newaxis]
     angle_diff_cost = (valid_mask * diff_angle) * vdc_weight
     angle_diff_cost = angle_diff_cost.T
     angle_diff_cost = angle_diff_cost * scores
@@ -330,19 +314,12 @@ def associate_kitti(detections, trackers, det_cates, iou_threshold,
         Cost from IoU
     """
     iou_matrix = iou_batch(detections, trackers)
-    
 
     """
         With multiple categories, generate the cost for catgory mismatch
     """
-    num_dets = detections.shape[0]
-    num_trk = trackers.shape[0]
-    cate_matrix = np.zeros((num_dets, num_trk))
-    for i in range(num_dets):
-            for j in range(num_trk):
-                if det_cates[i] != trackers[j, 4]:
-                        cate_matrix[i][j] = -1e6
-    
+    cate_matrix = np.where(det_cates[:, np.newaxis] != trackers[np.newaxis, :, 4], -1e6, 0.0)
+
     cost_matrix = - iou_matrix -angle_diff_cost - cate_matrix
 
     if min(iou_matrix.shape) > 0:
@@ -354,26 +331,4 @@ def associate_kitti(detections, trackers, det_cates, iou_threshold,
     else:
         matched_indices = np.empty(shape=(0,2))
 
-    unmatched_detections = []
-    for d, det in enumerate(detections):
-        if(d not in matched_indices[:,0]):
-            unmatched_detections.append(d)
-    unmatched_trackers = []
-    for t, trk in enumerate(trackers):
-        if(t not in matched_indices[:,1]):
-            unmatched_trackers.append(t)
-
-    #filter out matched with low IOU
-    matches = []
-    for m in matched_indices:
-        if(iou_matrix[m[0], m[1]]<iou_threshold):
-            unmatched_detections.append(m[0])
-            unmatched_trackers.append(m[1])
-        else:
-            matches.append(m.reshape(1,2))
-    if(len(matches)==0):
-        matches = np.empty((0,2),dtype=int)
-    else:
-        matches = np.concatenate(matches,axis=0)
-
-    return matches, np.array(unmatched_detections), np.array(unmatched_trackers)
+    return _filter_matches(matched_indices, iou_matrix, iou_threshold, len(detections), len(trackers))

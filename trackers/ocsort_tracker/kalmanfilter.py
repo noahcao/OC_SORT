@@ -384,25 +384,56 @@ class KalmanFilterNew(object):
         """
             Save the parameters before non-observation forward
         """
-        self.attr_saved = deepcopy(self.__dict__)
+        self.attr_saved = {
+            'x': self.x.copy(),
+            'P': self.P.copy(),
+            'Q': self.Q.copy(),
+            'R': self.R.copy(),
+            'F': self.F,
+            'H': self.H,
+            'K': self.K.copy(),
+            'y': self.y.copy(),
+            'S': self.S.copy(),
+            'SI': self.SI.copy(),
+            '_I': self._I,
+            'x_prior': self.x_prior.copy(),
+            'P_prior': self.P_prior.copy(),
+            'x_post': self.x_post.copy(),
+            'P_post': self.P_post.copy(),
+            'z': deepcopy(self.z),
+            '_log_likelihood': self._log_likelihood,
+            '_likelihood': self._likelihood,
+            '_mahalanobis': self._mahalanobis,
+            'history_obs': list(self.history_obs),
+            'inv': self.inv,
+            'observed': self.observed,
+            '_alpha_sq': self._alpha_sq,
+            'M': self.M,
+            'B': self.B,
+            'dim_x': self.dim_x,
+            'dim_z': self.dim_z,
+            'dim_u': self.dim_u,
+        }
 
 
     def unfreeze(self):
         if self.attr_saved is not None:
-            new_history = deepcopy(self.history_obs)
-            self.__dict__ = self.attr_saved
-            # self.history_obs = new_history 
+            new_history = self.history_obs
+            saved = self.attr_saved
+            for key, val in saved.items():
+                setattr(self, key, val)
+            self.attr_saved = None
             self.history_obs = self.history_obs[:-1]
             occur = [int(d is None) for d in new_history]
             indices = np.where(np.array(occur)==0)[0]
             index1 = indices[-2]
             index2 = indices[-1]
-            box1 = new_history[index1]
-            x1, y1, s1, r1 = box1 
+            box1 = new_history[index1].flatten()
+            x1, y1, s1, r1 = box1
             w1 = np.sqrt(s1 * r1)
             h1 = np.sqrt(s1 / r1)
-            box2 = new_history[index2]
-            x2, y2, s2, r2 = box2 
+            box2 = new_history[index2].flatten()
+            x2, y2, s2, r2 = box2
             w2 = np.sqrt(s2 * r2)
             h2 = np.sqrt(s2 / r2)
             time_gap = index2 - index1
@@ -521,7 +552,7 @@ class KalmanFilterNew(object):
         self.P = dot(dot(I_KH, self.P), I_KH.T) + dot(dot(self.K, R), self.K.T)
 
         # save measurement and posterior state
-        self.z = deepcopy(z)
+        self.z = z.copy()
         self.x_post = self.x.copy()
         self.P_post = self.P.copy()
 

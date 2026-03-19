@@ -16,6 +16,7 @@
 </center>
 
 ## News
+* [03/19/2026]: I refactored the python implementation to get a 1.5x ~ 2x acceleration of the inference process.
 * [07/09/2023]: A C++ support is provided. See the [doc](deploy/OCSort/cpp/Readme.md) for instructions. Thanks for the contribution!
 * [07/01/2023]: [Deep OC-SORT](https://github.com/GerardMaggiolino/Deep-OC-SORT/) is accepted to ICIP2023. It adds an adaptive appeareance similarity-based association upon OC-SORT.
 * [03/15/2023]: We update the preprint version on [Arxiv](https://arxiv.org/pdf/2203.14360.pdf). We rename OOS to be "Observation-centric Re-Update" (ORU).
@@ -74,7 +75,7 @@ python3 tools/demo_track.py --demo_type video -f exps/example/mot/yolox_dancetra
 We are still actively updating OC-SORT. We always welcome contributions to make it better for the community. We have some high-priorty to-dos as below:
 - [x] Add more asssocitaion cost choices: GIoU, CIoU, etc.
 - [x] Support OC-SORT in [mmtracking](https://github.com/open-mmlab/mmtracking).
-- [ ] Add more deployment options and improve the inference speed.
+- [x] Add more deployment options and improve the inference speed.
 - [x] Make OC-SORT adaptive to customized detector (in the [mmtracking](https://github.com/open-mmlab/mmtracking) version).
 
 
