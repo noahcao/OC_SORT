@@ -4,6 +4,7 @@
 #include "../include/KalmanFilter.hpp"
 #include "../include/Utilities.hpp"
 #include "iostream"
+#include <memory>
 /*
 This class represents the internal state of individual
 tracked objects observed as bbox.
@@ -23,7 +24,7 @@ namespace ocsort {
         /*variable*/
         static int count;
         Eigen::VectorXf bbox;// [5,1]
-        KalmanFilterNew* kf;
+        std::unique_ptr<KalmanFilterNew> kf;
         int time_since_update;
         int id;
         std::vector<Eigen::VectorXf> history;

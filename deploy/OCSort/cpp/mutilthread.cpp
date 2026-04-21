@@ -17,7 +17,7 @@ std::mutex dataMutex;
 @param data
 @return Eigen::Matrix<float, Eigen::Dynamic, 6>
 */
-Eigen::Matrix<float, Eigen::Dynamic, 6> Vector2Matrix(std::vector<std::vector<float>> data) {
+Eigen::Matrix<float, Eigen::Dynamic, 6> Vector2Matrix(const std::vector<std::vector<float>>& data) {
     Eigen::Matrix<float, Eigen::Dynamic, 6> matrix(data.size(), data[0].size());
     for (int i = 0; i < data.size(); ++i) {
         for (int j = 0; j < data[0].size(); ++j) {

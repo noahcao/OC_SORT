@@ -12,7 +12,7 @@ namespace ocsort {
         const Eigen::MatrixXf& tracks);
     Eigen::MatrixXf iou_batch(const Eigen::MatrixXf& bboxes1, const Eigen::MatrixXf& bboxes2);
     Eigen::MatrixXf giou_batch(const Eigen::MatrixXf& bboxes1, const Eigen::MatrixXf& bboxes2);
-    std::tuple<std::vector<Eigen::Matrix<int, 1, 2>>, std::vector<int>, std::vector<int>> associate(Eigen::MatrixXf detections, Eigen::MatrixXf trackers, float iou_threshold, Eigen::MatrixXf velocities, Eigen::MatrixXf previous_obs_, float vdc_weight);
+    std::tuple<std::vector<Eigen::Matrix<int, 1, 2>>, std::vector<int>, std::vector<int>> associate(const Eigen::MatrixXf& detections, const Eigen::MatrixXf& trackers, float iou_threshold, const Eigen::MatrixXf& velocities, const Eigen::MatrixXf& previous_obs_, float vdc_weight);
 }// namespace ocsort
 
 #endif//OC_SORT_CPP_ASSOCIATION_HPP

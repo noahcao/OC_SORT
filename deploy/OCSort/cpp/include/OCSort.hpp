@@ -11,7 +11,7 @@ namespace ocsort {
     public:
         OCSort(float det_thresh_, int max_age_ = 30, int min_hits_ = 3, float iou_threshold_ = 0.3,
             int delta_t_ = 3, std::string asso_func_ = "iou", float inertia_ = 0.2, bool use_byte_ = false);
-        std::vector<Eigen::RowVectorXf> update(Eigen::MatrixXf dets);
+        std::vector<Eigen::RowVectorXf> update(const Eigen::MatrixXf& dets);
 
     public:
         float det_thresh;

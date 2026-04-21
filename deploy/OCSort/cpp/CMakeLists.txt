@@ -25,4 +25,8 @@ target_link_libraries(${PROJECT_NAME} Eigen3::Eigen)
 add_executable(test mutilthread.cpp ../detector/inference.h ../detector/inference.cpp)
 target_link_libraries(test PUBLIC Eigen3::Eigen ${PROJECT_NAME} ${OpenCV_LIBS})
 
+# unit tests for bug fixes (no OpenCV dependency)
+add_executable(test_fixes test_fixes.cpp)
+target_link_libraries(test_fixes PUBLIC Eigen3::Eigen ${PROJECT_NAME})
+
 

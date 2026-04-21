@@ -35,27 +35,24 @@ namespace ocsort {
         os << std::fixed << std::setprecision(2);
         return os;
     }
-    std::vector<Eigen::RowVectorXf> OCSort::update(Eigen::MatrixXf dets) {
+    std::vector<Eigen::RowVectorXf> OCSort::update(const Eigen::MatrixXf& dets) {
         frame_count += 1;
-        Eigen::Matrix<float, Eigen::Dynamic, 4> xyxys = dets.leftCols(4);
         Eigen::Matrix<float, 1, Eigen::Dynamic> confs = dets.col(4);
-        Eigen::Matrix<float, 1, Eigen::Dynamic> clss = dets.col(5);
-        Eigen::MatrixXf output_results = dets;
         auto inds_low = confs.array() > 0.1;
         auto inds_high = confs.array() < det_thresh;
         auto inds_second = inds_low && inds_high;
-        Eigen::Matrix<float, Eigen::Dynamic, 6> dets_second;
         Eigen::Matrix<bool, 1, Eigen::Dynamic> remain_inds = (confs.array() > det_thresh);
-        Eigen::Matrix<float, Eigen::Dynamic, 6> dets_first;
-        for (int i = 0; i < output_results.rows(); i++) {
-            if (true == inds_second(i)) {
-                dets_second.conservativeResize(dets_second.rows() + 1, Eigen::NoChange);
-                dets_second.row(dets_second.rows() - 1) = output_results.row(i);
-            }
-            if (true == remain_inds(i)) {
-                dets_first.conservativeResize(dets_first.rows() + 1, Eigen::NoChange);
-                dets_first.row(dets_first.rows() - 1) = output_results.row(i);
-            }
+        int n_second = 0, n_first = 0;
+        for (int i = 0; i < dets.rows(); i++) {
+            if (inds_second(i)) n_second++;
+            if (remain_inds(i)) n_first++;
+        }
+        Eigen::Matrix<float, Eigen::Dynamic, 6> dets_second(n_second, 6);
+        Eigen::Matrix<float, Eigen::Dynamic, 6> dets_first(n_first, 6);
+        int idx_second = 0, idx_first = 0;
+        for (int i = 0; i < dets.rows(); i++) {
+            if (inds_second(i)) dets_second.row(idx_second++) = dets.row(i);
+            if (remain_inds(i)) dets_first.row(idx_first++) = dets.row(i);
         }
         Eigen::MatrixXf trks = Eigen::MatrixXf::Zero(trackers.size(), 5);
         std::vector<int> to_del;
@@ -114,7 +111,7 @@ namespace ocsort {
                     }
                 }
                 std::vector<int> rowsol, colsol;
-                float MIN_cost = execLapjv(iou_matrix, rowsol, colsol, true, 0.01, true);
+                execLapjv(iou_matrix, rowsol, colsol, true, 0.01, true);
                 std::vector<std::vector<int>> matched_indices;
                 for (int i = 0; i < rowsol.size(); i++) {
                     if (rowsol.at(i) >= 0) {
@@ -165,7 +162,7 @@ namespace ocsort {
                     }
                 }
                 std::vector<int> rowsol, colsol;
-                float MIN_cost = execLapjv(iou_matrix, rowsol, colsol, true, 0.01, true);
+                execLapjv(iou_matrix, rowsol, colsol, true, 0.01, true);
                 std::vector<std::vector<int>> rematched_indices;
                 for (int i = 0; i < rowsol.size(); i++) {
                     if (rowsol.at(i) >= 0) {
