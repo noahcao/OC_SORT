@@ -1,7 +1,7 @@
 #ifndef OC_SORT_CPP_KALMANBOXTRACKER_HPP
 #define OC_SORT_CPP_KALMANBOXTRACKER_HPP
 ////////////// KalmanBoxTracker /////////////
-#include "../include/kalmanfilter.hpp"
+#include "../include/KalmanFilter.hpp"
 #include "../include/Utilities.hpp"
 #include "iostream"
 /*
