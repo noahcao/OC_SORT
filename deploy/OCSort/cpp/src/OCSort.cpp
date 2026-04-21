@@ -26,7 +26,7 @@ namespace ocsort {
             {"iou", iou_batch},
             { "giou", giou_batch }};
         ;
-        std::function<Eigen::MatrixXf(const Eigen::MatrixXf&, const Eigen::MatrixXf&)> asso_func = ASSO_FUNCS[asso_func_];
+        asso_func = ASSO_FUNCS[asso_func_];
         inertia = inertia_;
         use_byte = use_byte_;
         KalmanBoxTracker::count = 0;
@@ -92,7 +92,7 @@ namespace ocsort {
             for (auto i : unmatched_trks) {
                 u_trks.row(index_for_u_trks++) = trks.row(i);
             }
-            Eigen::MatrixXf iou_left = giou_batch(dets_second, u_trks);
+            Eigen::MatrixXf iou_left = asso_func(dets_second, u_trks);
             if (iou_left.maxCoeff() > iou_threshold) {
                 std::vector<std::vector<float>> iou_matrix(iou_left.rows(), std::vector<float>(iou_left.cols()));
                 for (int i = 0; i < iou_left.rows(); i++) {
@@ -143,7 +143,7 @@ namespace ocsort {
             for (auto i : unmatched_trks) {
                 left_trks.row(indx_for_trk++) = last_boxes.row(i);
             }
-            Eigen::MatrixXf iou_left = giou_batch(left_dets, left_trks);
+            Eigen::MatrixXf iou_left = asso_func(left_dets, left_trks);
             if (iou_left.maxCoeff() > iou_threshold) {
                 std::vector<std::vector<float>> iou_matrix(iou_left.rows(), std::vector<float>(iou_left.cols()));
                 for (int i = 0; i < iou_left.rows(); i++) {
