@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 #include <any>
 #include <map>
+#include <optional>
 namespace ocsort {
     class KalmanFilterNew {
     public:
@@ -57,11 +58,11 @@ namespace ocsort {
         Eigen::VectorXf x_post;
         Eigen::MatrixXf P_post;
         // keeps all observations. When there is a 'z', it is directly pushed back.
-        std::vector<Eigen::VectorXf*> history_obs;
+        std::vector<std::optional<Eigen::VectorXf>> history_obs;
         // The following is newly added by ocsort.
         // Used to mark the tracking state (whether there is still a target matching this trajectory), default value is false.
         bool observed = false;
-        std::vector<Eigen::VectorXf*> new_history; // Used to create a virtual trajectory.
+        std::vector<std::optional<Eigen::VectorXf>> new_history; // Used to create a virtual trajectory.
 
         /* todo: Let's change the way we store variables, as C++ does not have Python's self.dict.
         Using map<string,any> incurs high memory overhead, and there are errors when assigning values to Eigen data.
@@ -87,7 +88,7 @@ namespace ocsort {
             Eigen::MatrixXf P_prior;
             Eigen::VectorXf x_post;
             Eigen::MatrixXf P_post;
-            std::vector<Eigen::VectorXf*> history_obs;
+            std::vector<std::optional<Eigen::VectorXf>> history_obs;
             bool observed = false;
             // The following is to determine whether the data has been saved due to freezing.
             bool IsInitialized = false;

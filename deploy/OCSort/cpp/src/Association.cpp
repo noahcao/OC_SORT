@@ -79,14 +79,10 @@ namespace ocsort {
 
         Eigen::MatrixXf wc = xxc2 - xxc1;
         Eigen::MatrixXf hc = yyc2 - yyc1;
-        if ((wc.array() > 0).all() && (hc.array() > 0).all())
-            return iou;
-        else {
-            Eigen::MatrixXf area_enclose = wc.array() * hc.array();
-            Eigen::MatrixXf giou = iou.array() - (area_enclose.array() - wh.array()) / area_enclose.array();
-            giou = (giou.array() + 1) / 2.0;
-            return giou;
-        }
+        Eigen::MatrixXf area_enclose = wc.array() * hc.array();
+        Eigen::MatrixXf giou = iou.array() - (area_enclose.array() - Sum.array()) / area_enclose.array();
+        giou = (giou.array() + 1) / 2.0;
+        return giou;
     }
 
     std::tuple<std::vector<Eigen::Matrix<int, 1, 2>>, std::vector<int>, std::vector<int>> associate(Eigen::MatrixXf detections, Eigen::MatrixXf trackers, float iou_threshold, Eigen::MatrixXf velocities, Eigen::MatrixXf previous_obs_, float vdc_weight) {

@@ -31,8 +31,8 @@ namespace ocsort {
         P_prior = P;
     }
     void KalmanFilterNew::update(Eigen::VectorXf* z_) {
-        history_obs.push_back(z_);
         if (z_ == nullptr) {
+            history_obs.push_back(std::nullopt);
             if (true == observed) freeze();
             observed = false;
             z = Eigen::VectorXf::Zero(dim_z, 1);
@@ -41,6 +41,7 @@ namespace ocsort {
             y = Eigen::VectorXf::Zero(dim_z, 1);
             return;
         }
+        history_obs.push_back(*z_);
         if (false == observed) unfreeze();
         observed = true;
         y = *z_ - H * x;
@@ -97,20 +98,22 @@ namespace ocsort {
             x_prior = attr_saved.x_prior;
             P_prior = attr_saved.P_prior;
             x_post = attr_saved.x_post;
+            P_post = attr_saved.P_post;
+            history_obs = attr_saved.history_obs;
             history_obs.erase(history_obs.end() - 1);
-            Eigen::VectorXf box1;           
-            Eigen::VectorXf box2;           
-            int lastNotNullIndex = -1;     
+            Eigen::VectorXf box1;
+            Eigen::VectorXf box2;
+            int lastNotNullIndex = -1;
             int secondLastNotNullIndex = -1;
             for (int i = new_history.size() - 1; i >= 0; i--) {
-                if (new_history[i] != nullptr) {
+                if (new_history[i].has_value()) {
                     if (lastNotNullIndex == -1) {
                         lastNotNullIndex = i;
-                        box2 = *(new_history.at(lastNotNullIndex));
+                        box2 = new_history.at(lastNotNullIndex).value();
                     }
                     else if (secondLastNotNullIndex == -1) {
                         secondLastNotNullIndex = i;
-                        box1 = *(new_history.at(secondLastNotNullIndex));
+                        box1 = new_history.at(secondLastNotNullIndex).value();
                         break;
                     }
                 }
@@ -122,10 +125,10 @@ namespace ocsort {
             double y2 = box2[1];
             double w1 = std::sqrt(box1[2] * box1[3]);
             double h1 = std::sqrt(box1[2] / box1[3]);
-            double w2 = std::sqrt(box1[2] * box1[3]);
-            double h2 = std::sqrt(box1[2] / box1[3]);
+            double w2 = std::sqrt(box2[2] * box2[3]);
+            double h2 = std::sqrt(box2[2] / box2[3]);
             double dx = (x2 - x1) / time_gap;
-            double dy = (y1 - y2) / time_gap;
+            double dy = (y2 - y1) / time_gap;
             double dw = (w2 - w1) / time_gap;
             double dh = (h2 - h1) / time_gap;
 

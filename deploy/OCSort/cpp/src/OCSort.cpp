@@ -63,7 +63,20 @@ namespace ocsort {
         for (int i = 0; i < trks.rows(); i++) {
             Eigen::RowVectorXf pos = trackers[i].predict();
             trks.row(i) << pos(0), pos(1), pos(2), pos(3), 0;
+            if (pos.array().isNaN().any()) {
+                to_del.push_back(i);
+            }
         }
+        for (int i = to_del.size() - 1; i >= 0; i--) {
+            int idx = to_del[i];
+            int last = trackers.size() - 1;
+            if (idx != last) {
+                trks.row(idx) = trks.row(last);
+                std::swap(trackers[idx], trackers[last]);
+            }
+            trackers.pop_back();
+        }
+        trks.conservativeResize(trackers.size(), Eigen::NoChange);
         Eigen::MatrixXf velocities = Eigen::MatrixXf::Zero(trackers.size(), 2);
         Eigen::MatrixXf last_boxes = Eigen::MatrixXf::Zero(trackers.size(), 5);
         Eigen::MatrixXf k_observations = Eigen::MatrixXf::Zero(trackers.size(), 5);
@@ -197,7 +210,7 @@ namespace ocsort {
         }
         for (int i : unmatched_dets) {
             Eigen::RowVectorXf tmp_bbox = dets_first.block(i, 0, 1, 5);
-            int cls_ = int(dets(i, 5));
+            int cls_ = int(dets_first(i, 5));
             KalmanBoxTracker trk = KalmanBoxTracker(tmp_bbox, cls_, delta_t);
             trackers.push_back(trk);
         }
